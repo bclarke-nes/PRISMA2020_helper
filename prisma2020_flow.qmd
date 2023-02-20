@@ -1,0 +1,59 @@
+---
+title: "PRISMA2020"
+format: html
+bibliography: "data/bibliography.bib"
+execute: 
+  eval: true
+  echo: false
+  messages: false
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(pacman)
+p_load(tidyverse, PRISMA2020,revtools, quarto, glue)
+source("src/scripts.R")
+prisma_data_path <- c("data/bib_output_prisma.csv")
+
+counts <- prisma_count_groups(prisma_data_path)
+```
+
+```{r}
+#| eval: false
+
+# if interactive, a) make url data
+url_find(counts$prisma2020) # which returns an rds object that the template can use
+urls <- readRDS("data/urls.RDS")
+
+# b) walk over url data to create pages from prisma2020_template.qmd
+walk(1:nrow(urls), category_breakdown)
+
+```
+
+## PRISMA 2020 Flow Chart
+
+```{r}
+# join and plot
+PRISMA_template %>%
+  select(!n) %>%
+  left_join(counts$prisma2020, by="data") %>%
+  select(!groups) %>%
+  PRISMA_data() %>%
+  PRISMA_flowdiagram(.,
+                     fontsize = 14,
+                     title_colour = "AquaMarine",
+                     greybox_colour = "MistyRose",
+                     interactive = TRUE,
+                     previous = FALSE,
+                     other = FALSE,
+                     side_boxes = TRUE)
+
+```
+
+The nice bit is that we can insert references directly in Quarto.
+
+Here are some interesting references to follow-up:
+
+[@Dong_2022; @El_2022; @Dos_2022; @Colonetti_2023; @Aykenar_2022]

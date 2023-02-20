@@ -1,0 +1,54 @@
+---
+title: "PRISMA2020"
+format: html
+bibliography: "data/bibliography.bib"
+params: 
+  data: data
+---
+  
+```{r}
+#| results: asis
+#| echo: false
+#| warning: false
+#| message: false
+
+library(pacman)
+p_load(tidyverse, glue)
+
+urls <- readRDS("data/urls.rds")
+
+cat(glue("## {params$data}"))
+
+# then take the data, and look up in urls
+
+temp_url <- urls %>%
+  filter(data == params$data)
+
+try(temp_data <- temp_url %>%
+  unnest(groups))
+```
+
+There were a total of `r temp_url %>% pull(n)` reports in this group. The citations were:
+
+```{r}
+#| results: asis
+#| echo: false
+
+if(params$data != "dbr_excluded") {
+try(glue("+ @{temp_data %>% arrange(label) %>% pull(label)}  "))
+} else {
+  
+  reasons <- temp_data %>% distinct(eligible) %>% pull(eligible)
+  
+  for(i in 1:length(reasons)) {
+    cat("  \n")
+    cat(glue("### {reasons[i]}"))
+    cat("  \n")
+    cat(paste0("+ @", temp_data %>% filter(eligible == reasons[i]) %>% arrange(label) %>% pull(label), "  \n"))
+    cat("  \n")
+  }
+  
+  #try(glue("{reasons}"))
+}
+```
+

@@ -1,0 +1,23 @@
+﻿var,filter_string
+previous_studies,stud_rep == "study" & prev_new == "prev"
+previous_reports,stud_rep == "report" & prev_new == "prev"
+database_results,prev_new == "new" & id_method == "db"
+register_results,prev_new == "new" & id_method == "register"
+duplicates,rem_bef_screen == "dupe"
+excluded_automatic,rem_bef_screen == "auto_removed"
+excluded_other,rem_bef_screen == "other"
+records_screened,pass_screen != ""
+records_excluded,pass_screen == "no"
+dbr_sought_reports,pass_screen == "yes"
+dbr_notretrieved_reports,pass_screen == "yes" & retrieve == "no"
+dbr_assessed,pass_screen == "yes" & retrieve == "yes"
+website_results,id_method == "web"
+organisation_results,id_method == "orgs"
+citations_results,id_method == "citation"
+other_sought_reports,id_method %in% webs
+other_notretrieved_reports,id_method %in% webs & retrieve == "no"
+other_assessed,retrieve == "yes" & id_method %in% webs
+new_studies,stud_rep == "study" & eligible == "yes"
+new_reports,stud_rep == "report" & eligible == "yes"
+total_studies,stud_rep == "study" & (prev_new == "prev" | eligible == "yes")
+total_reports,stud_rep == "report" & (prev_new == "prev" | eligible == "yes")
