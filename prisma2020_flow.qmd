@@ -13,7 +13,7 @@ editor_options:
 
 ```{r}
 library(pacman)
-p_load(tidyverse, PRISMA2020,revtools, quarto, glue)
+p_load(tidyverse, PRISMA2020,quarto, glue)
 source("src/scripts.R")
 prisma_data_path <- c("data/bib_output_prisma.csv")
 

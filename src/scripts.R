@@ -1,5 +1,6 @@
 library(pacman)
-p_load(tidyverse, revtools, RefManageR, rbibutils, tools, glue)
+p_load(tidyverse, revtools, tools, glue)
+#p_load(tidyverse, revtools, RefManageR, rbibutils, tools, glue)
 p_load_gh("elizagrames/litsearchr")
 
 # source file locations ----

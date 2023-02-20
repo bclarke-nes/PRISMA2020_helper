@@ -1,5 +1,6 @@
 /archive/
 /prisma2020_template_files/
+/prisma2020_flow_files/
 /test/
 /data/
 /*.html
@@ -13,6 +14,7 @@
 /*.log
 data/*.*
 knit_list.R
+readme.Rmd
 
 # History files
 .Rhistory
