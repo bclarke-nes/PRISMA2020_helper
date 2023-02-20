@@ -4,12 +4,18 @@
 source("src/scripts.R") # especially bib_convert to help tidy bibliographies
 
 # set paths ----
-input_folder <- c("data/gsIII-mini")
+input_folder <- c("data/bl")
 bib_output_path <- c("data/bibliography.bib")
 prisma_output_path <- c("data/bib_output_prisma.csv")
 
 # to load and tidy bibliographic data from input files ----
 bib_read_join(input_folder, bib_output_path)
+
+# can also use this to fake the manual PRISMA category data for demonstration purposes only ----
+fake_screen(prisma_output_path)
+make_fake_prisma(prisma_output_path)
+
+# proper screening ----
 
 # loading joined bibliography ----
 bib_raw <- read_rds("data/bib_raw.rds")

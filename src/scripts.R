@@ -1,6 +1,5 @@
 library(pacman)
 p_load(tidyverse, revtools, tools, glue)
-#p_load(tidyverse, revtools, RefManageR, rbibutils, tools, glue)
 p_load_gh("elizagrames/litsearchr")
 
 # source file locations ----
@@ -210,3 +209,88 @@ url_find <- function(df) {
   saveRDS(urls, "data/urls.rds")
   
 } 
+
+# synthetic data scripts for testing ----
+
+make_fake_prisma <- function(path) {
+  raw <- read_csv(path)
+  
+  screened_in <- raw %>%
+    filter(pass_screen == "yes")
+  
+  screened_out <- raw %>%
+    anti_join(screened_in)
+  
+  retrieve_all <- screened_in %>%
+    mutate(retrieve = sample(c("yes", "yes", "yes", "yes", "no"), n(), replace = TRUE))
+  
+  eligible_all <- retrieve_all %>%
+    filter(retrieve == "yes") %>%
+    mutate(eligible = sample(
+      c("yes", "yes", "duplicate", "yes", "yes", "not relevant"),
+      n(),
+      replace = TRUE
+    ))
+  
+  processed <- eligible_all %>%
+    bind_rows(retrieve_all %>% filter(retrieve != "yes")) %>%
+    bind_rows(screened_out)
+  
+  write_csv(processed, path)
+}
+
+#quick data-faker for screening, duplicates, etc
+
+fake_screen <- function(prisma_output_path) {
+  
+  bib_raw <- read_rds("data/bib_raw.rds")
+  
+  bib_duplicates <- bib_raw %>%
+    mutate(matches = "") %>%
+    slice_sample(n=round(0.1 * nrow(.))) 
+  
+  bib_dedup <- bib_raw %>%
+    mutate(matches = "") %>%
+    anti_join(bib_duplicates)
+  
+  # get through title screening
+  bib_screened <- bib_dedup %>%
+    mutate(citation = title) %>%
+    mutate(screening = sample(c("selected", "selected", "excluded"), n(), replace = TRUE)) %>%
+    mutate(notes = "")
+  
+  # topic screening now adds
+  
+  bib_screened_topic <- bib_screened %>%
+    filter(screening == "selected") %>%
+    mutate(screened_topics = sample(c("selected", "selected", "excluded"), n(), replace = TRUE)) %>%
+    mutate(display = TRUE) %>%
+    mutate(topic = sample(1:5, n(), replace = TRUE))
+  
+  bib_screened_out <- bib_screened %>%
+    anti_join(bib_screened_topic) %>%
+    mutate(pass_screen = "no")
+  
+  # now "screening" and "screened_topics" columns have the juicy stuff. Bit of logic to create a pass_screen column (matching flow chart requirements):
+  output_columns <- c("label", "stud_rep",	"prev_new",	"id_method",	"rem_bef_screen",	"pass_screen", "retrieve", "eligible")
+  #
+  bib_duplicates <- bib_duplicates %>%
+    rename_with(tolower)
+  #
+  # # then joining excluded parts back again for counting
+  bib_output_prisma <- bib_screened_topic %>%
+    mutate(pass_screen = case_when(
+      screening == "selected" & screened_topics == "selected" ~ "yes",
+      TRUE ~ "no")) %>%
+    mutate(rem_bef_screen = "") %>%
+    add_row(bib_duplicates) %>%
+    add_row(bib_screened_out) %>%
+    mutate(stud_rep = "study", prev_new = "new", id_method="db",retrieve = "", eligible = "") %>%
+    select(any_of(output_columns)) %>%
+    mutate(rem_bef_screen = case_when(is.na(pass_screen) ~ "dupe",
+                                      TRUE ~ rem_bef_screen))
+  
+  # write out the prisma-format spreadsheet for manual data input
+  write_csv(bib_output_prisma, prisma_output_path)
+  
+}

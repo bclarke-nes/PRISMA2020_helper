@@ -54,6 +54,4 @@ PRISMA_template %>%
 
 The nice bit is that we can insert references directly in Quarto.
 
-Here are some interesting references to follow-up:
-
-[@Dong_2022; @El_2022; @Dos_2022; @Colonetti_2023; @Aykenar_2022]
+Here are some interesting references to follow-up: [@Agrawal_2023; @Agwati_2022; @Ahern_2022; @Abdulhakeem_2022]

@@ -28,7 +28,7 @@ encountered during use.
 While PRISMA2020 flow diagrams play a vital tool in making systematic
 reviews better, constructing these diagrams is arguous. This set of
 tools allow users to automate some stages of this data collection
-(e.g. counting duplicates or publications excluded at screening).
+(e.g. counting duplicates or publications excluded at screening).
 
 ## Use
 
